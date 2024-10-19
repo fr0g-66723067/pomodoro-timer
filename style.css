@@ -1,0 +1,32 @@
+.timer-container {
+    width: 300px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+#pomodoro-time {
+    font-size: 48px;
+    font-weight: bold;
+    color: #333;
+}
+
+#break-time {
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+}
+
+button {
+    width: 100px;
+    height: 30px;
+    margin: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3e8e41;
+}
