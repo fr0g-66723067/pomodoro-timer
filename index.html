@@ -7,11 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="timer-container">
-        <h1 id="pomodoro-time"></h1>
-        <p id="break-time"></p>
-        <button id="start-pomodoro">Start Pomodoro</button>
-        <button id="stop-pomodoro">Stop Pomodoro</button>
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+        <div id="pomodoro-time" class="timer-display">Time left: 25:00</div>
+        <div class="button-group">
+            <button id="start-pomodoro-button" class="btn">Start Pomodoro</button>
+            <button id="start-break-button" class="btn">Start Break</button>
+            <button id="stop-button" class="btn" disabled>Stop</button>
+            <button id="test-alarm-button" class="btn">Test Alarm</button>
+        </div>
+        <div id="break-time" class="break-message"></div>
+        <div id="session-count">Sessions completed: 0</div>
+        <div class="notes-section">
+            <input type="text" id="note-input" placeholder="Enter note about session">
+            <button id="add-note-button" class="btn">Add Note</button>
+            <ul id="notes"></ul>
+        </div>
     </div>
 
     <script src="script.js"></script>

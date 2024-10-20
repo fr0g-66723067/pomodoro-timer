@@ -1,66 +1,135 @@
-const startButton = document.getElementById('start-pomodoro');
-const stopButton = document.getElementById('stop-pomodoro');
-const pomodoroTimeDisplay = document.getElementById('pomodoro-time');
-const breakTimeDisplay = document.getElementById('break-time');
+document.addEventListener('DOMContentLoaded', () => {
+    const breakTimeDisplay = document.getElementById('break-time');
+    const startPomodoroButton = document.getElementById('start-pomodoro-button');
+    const startBreakButton = document.getElementById('start-break-button');
+    const stopButton = document.getElementById('stop-button');
+    const testAlarmButton = document.getElementById('test-alarm-button');
+    const pomodoroTimeDisplay = document.getElementById('pomodoro-time');
+    const sessionCountDisplay = document.getElementById('session-count');
+    const notesDisplay = document.getElementById('notes');
+    const noteInput = document.getElementById('note-input');
+    const addNoteButton = document.getElementById('add-note-button');
 
-let timer = null;
-let workSession = 25 * 60 * 1000; // 25 minutes in milliseconds
-let breakTime = 5 * 60 * 1000; // 5 minutes in milliseconds
+    if (!breakTimeDisplay || !startPomodoroButton || !startBreakButton || !stopButton || !testAlarmButton || !pomodoroTimeDisplay || !sessionCountDisplay || !notesDisplay || !noteInput || !addNoteButton) {
+        console.error('One or more elements not found');
+        return;
+    }
 
-function startPomodoro() {
-    if (timer) return;
+    const workSessionDuration = 25 * 60 * 1000; // 25 minutes in milliseconds
+    const breakDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+    let timer = null;
+    let sessionCount = 0;
+    let notes = [];
 
-    startButton.disabled = true;
-    stopButton.disabled = false;
+    // Create an audio object for the alarm sound
+    const alarmSound = new Audio('alarm.mp3');
 
-    timer = setInterval(() => {
-        const currentTime = new Date().getTime();
-        const timeLeft = workSession - (currentTime - workSession);
-        pomodoroTimeDisplay.textContent = `Time left: ${formatTime(timeLeft)}`;
+    function startSession(duration, isPomodoro) {
+        if (timer) return;
 
-        if (timeLeft <= 0) {
-            break;
-            clearInterval(timer);
+        toggleButtons(true);
 
-            // Play sound effect
-            playSoundEffect();
+        const startTime = Date.now();
 
-            // Display break message
-            displayBreakMessage();
+        timer = setInterval(() => {
+            const timeElapsed = Date.now() - startTime;
+            const timeLeft = duration - timeElapsed;
+            pomodoroTimeDisplay.textContent = `Time left: ${formatTime(timeLeft)}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                timer = null;
+
+                // Flash the page
+                flashPage();
+
+                // Play sound effect
+                playSoundEffect();
+
+                // Display break message if it was a Pomodoro session
+                if (isPomodoro) {
+                    displayBreakMessage();
+                    sessionCount++;
+                    updateSessionCount();
+                } else {
+                    pomodoroTimeDisplay.textContent = 'Break over!';
+                }
+
+                toggleButtons(false);
+            }
+        }, 1000);
+    }
+
+    function stopSession() {
+        clearInterval(timer);
+        timer = null;
+        toggleButtons(false);
+        pomodoroTimeDisplay.textContent = 'Session stopped.';
+    }
+
+    function toggleButtons(isRunning) {
+        startPomodoroButton.disabled = isRunning;
+        startBreakButton.disabled = isRunning;
+        stopButton.disabled = !isRunning;
+    }
+
+    function formatTime(milliseconds) {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function playSoundEffect() {
+        // Play the alarm sound
+        alarmSound.play();
+    }
+
+    function displayBreakMessage() {
+        breakTimeDisplay.textContent = 'Break time! Relax for 5 minutes.';
+    }
+
+    function updateSessionCount() {
+        sessionCountDisplay.textContent = `Sessions completed: ${sessionCount}`;
+    }
+
+    function addNote() {
+        const note = noteInput.value.trim();
+        if (note) {
+            const timestamp = new Date().toLocaleTimeString();
+            notes.push({ note, timestamp });
+            updateNotesDisplay();
+            noteInput.value = '';
         }
-    }, 1000);
-}
+    }
 
-function stopPomodoro() {
-    clearInterval(timer);
-    startButton.disabled = false;
-    stopButton.disabled = true;
+    function removeNote(index) {
+        notes.splice(index, 1);
+        updateNotesDisplay();
+    }
 
-    // Stop sound effect and break message
-    stopSoundEffect();
-    hideBreakMessage();
-}
+    function updateNotesDisplay() {
+        notesDisplay.innerHTML = notes.map((noteObj, index) => 
+            `<li>${noteObj.note} <span class="timestamp">(${noteObj.timestamp})</span> <button onclick="removeNoteHandler(${index})" class="remove-note-btn">Remove</button></li>`
+        ).join('');
+    }
 
-function playSoundEffect() {
-    const audio = new Audio('pomodoro-tone.mp3');
-    audio.play();
-}
+    function flashPage() {
+        document.body.classList.add('flash');
+        setTimeout(() => {
+            document.body.classList.remove('flash');
+        }, 100);
+    }
 
-function displayBreakMessage() {
-    breakTimeDisplay.textContent = 'Take a 5-minute break!';
-}
+    function testAlarm() {
+        playSoundEffect();
+    }
 
-function hideBreakMessage() {
-    breakTimeDisplay.textContent = '';
-}
+    window.removeNoteHandler = removeNote; // Make removeNote accessible globally
 
-function formatTime(timeLeft) {
-    const hours = Math.floor(timeLeft / 3600000);
-    const minutes = Math.floor((timeLeft % 3600000) / 60000);
-    const seconds = Math.floor((timeLeft % 60000) / 1000);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-startButton.addEventListener('click', startPomodoro);
-stopButton.addEventListener('click', stopPomodoro);
+    startPomodoroButton.addEventListener('click', () => startSession(workSessionDuration, true));
+    startBreakButton.addEventListener('click', () => startSession(breakDuration, false));
+    stopButton.addEventListener('click', stopSession);
+    addNoteButton.addEventListener('click', addNote);
+    testAlarmButton.addEventListener('click', testAlarm);
+});

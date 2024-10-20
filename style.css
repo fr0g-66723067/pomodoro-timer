@@ -1,32 +1,54 @@
-.timer-container {
-    width: 300px;
-    margin: 40px auto;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000; /* Black background */
+    color: #ffffff; /* White text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
     text-align: center;
+    background: #1e1e1e; /* Dark gray background for the container */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-#pomodoro-time {
-    font-size: 48px;
-    font-weight: bold;
-    color: #333;
+h1 {
+    margin-bottom: 20px;
+    color: #ffffff; /* White text */
 }
 
-#break-time {
-    font-size: 24px;
-    font-weight: bold;
-    color: #666;
+.timer-display {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #ff6b6b; /* Light red text */
 }
 
-button {
-    width: 100px;
-    height: 30px;
-    margin: 10px;
-    background-color: #4CAF50;
-    color: #fff;
+.button-group {
+    margin-bottom: 20px;
+}
+
+.btn {
+    background-color: #3498db; /* Blue background for buttons */
+    color: white;
     border: none;
+    padding: 10px 20px;
+    margin: 5px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
 }
 
-button:hover {
-    background-color: #3e8e41;
+.btn:disabled {
+    background-color: #bdc3c7; /* Gray background for disabled buttons */
+    cursor: not-allowed;
+}
+
+.break-message {
+    font-size: 1.2em;
+    color: #27ae60; /* Green text */
 }

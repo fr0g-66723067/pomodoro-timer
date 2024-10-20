@@ -1,2 +1,4 @@
-/.vscode
-/codeql-custom-queries-javascript
+# Ignore the pomodoro-timer directory
+pomodoro-timer/
+# Ignore vscode
+.vscode/
